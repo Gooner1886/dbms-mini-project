@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class = "abouthead">
+    <p style = "display:inline;">Register now to begin your blogging journey!</p>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+{% if error %}
+    <div class="alert alert-danger text-center font-weight-bold" role="alert">
+          {{ error }}!
+    </div>
+{% endif %}
+
+<div class = "registrationform">
+ <form action="/register" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username (2 to 15 characters)" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" id = "password" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password">
+        </div>
+        <button class="btn btn-primary" style = "background-color: #9e1b21; color: #f5e50a;" type="submit">Register</button>
+    </form>
+</div>
+{% endblock %}
