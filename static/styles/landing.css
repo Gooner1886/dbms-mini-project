@@ -1,0 +1,113 @@
+body, html {
+    margin: 0;
+    margin-bottom: 100px;
+    height: 100%;
+    width: 100%;
+    font: 400 15px/1.8 "Lato", sans-serif;
+    color: #777;
+  }
+  
+  html{
+    position:relative;
+    min-height: 100%;
+  }
+  
+  .bgimg-1, .bgimg-2, .bgimg-3 {
+    position: relative;
+    opacity: 0.65;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  
+  }
+  .bgimg-1 {
+    background-image: url("/static/images/home1.jpg");
+    min-height: 100%;
+  }
+  
+  .bgimg-2 {
+    background-image: url("/static/images/home2.jpg");
+    min-height: 400px;
+  }
+  
+  .bgimg-3 {
+    background-image: url("/static/images/home3.jpg");
+    min-height: 400px;
+  }
+  
+  .caption {
+    position: absolute;
+    left: 0%;
+    top: 30%;
+    width: 100%;
+    text-align: center;
+    color: #000000;
+  }
+
+  
+  h3 {
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font: 20px "Lato", sans-serif;
+    color: #111;
+  }
+  
+  /* Turn off parallax scrolling for tablets and phones */
+  @media only screen and (max-width: 768 px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+      background-attachment: scroll;
+    }
+  }
+  
+  .navbar {
+    height: 80px;
+    overflow: auto;
+    width: 100%;
+  }
+  
+  #centred {
+      height: 200px;
+      position: absolute;
+      top:0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+  }
+  
+  .navigation {
+      margin: 0px 40px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+  a:hover {
+      text-decoration: none !important;
+      color: #fff;
+  }
+
+  .logo {
+      font-family: 'Rock Salt', cursive;
+      text-emphasis: none;
+      text-decoration: none;
+      color: #fff;
+      font-size: 2.5em;
+      font-weight: bold;
+  }
+
+  .links {
+    text-emphasis: none;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.5em;
+    margin-right: 10px;
+  }
+
+  .landingtext {
+    font-family: 'Rock Salt', cursive;
+    font-size: 5em;
+    color: #000;
+  }

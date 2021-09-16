@@ -14,14 +14,18 @@ from helpers import login_required
 
 import mysql.connector
 
-
-
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Siddharth#52",
-  database="project"
+  password="rootroot"
 )
+
+# mydb = mysql.connector.connect(
+#   host="localhost",
+#   user="root",
+#   password="Siddharth#52",
+#   database="project"
+# )
 
 print(mydb) 
 
@@ -32,6 +36,9 @@ app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config['ENV'] = 'development'
+app.config['DEBUG'] = True
+app.config['TESTING'] = True
 
 
 # Ensure responses aren't cached
@@ -41,8 +48,6 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
-
-
 
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -62,7 +67,7 @@ app.config['MySQL_DB'] = 'project """
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return render_template("home.html")
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
@@ -71,7 +76,7 @@ def register():
         counter = 0
         username = request.form.get("username")
         for c in username:
-            counter = counter + 1;
+            counter = counter + 1
 
         # Ensure username was submitted
         if not request.form.get("username"):
