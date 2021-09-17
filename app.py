@@ -69,6 +69,10 @@ app.config['MySQL_DB'] = 'project """
 def home():
     return render_template("home.html")
 
+@app.route("/decide")
+def decide():
+    return render_template("decide.html")
+
 @app.route("/register", methods = ["GET", "POST"])
 def register():
     if request.method == "POST":

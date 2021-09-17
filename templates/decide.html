@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block pagecss %}
+<link href="/static/styles/decide.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="parent">
+    <h1 class="Heading">Welcome</h1>
+    <h2 class="subhead">Select an option</h2>
+    <div class="choosebox">
+        <div class="leftbox">
+            <h2 class="head">Buy</h2>
+            <img class="imgs" src="/static/images/Books.png" alt="books">
+            <button class="go">GO</button>
+        </div>
+        <div class="rightbox">
+            <h2 class="head">Sell</h2>
+            <img class="imgs" src="/static/images/tag.png" alt="sell">
+            <button class="go">GO</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

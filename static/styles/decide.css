@@ -1,0 +1,70 @@
+.parent {
+    height: 90vh;
+    width: 100vw;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.Heading {
+    color: black;
+    font-weight: bold;
+    font-size: 3em;
+}
+
+.choosebox {
+    width: 50%;
+    height: 45vh;
+    /* background-color: aquamarine; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+}
+
+.leftbox {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.rightbox {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.imgs {
+    height: 250px;
+    width: 225px;
+}  
+
+.head {
+    color: black;
+    font-size: 2.2em;
+    font-family: 'Rock Salt', cursive;
+}
+
+.go {
+    padding: 5px;
+    background-color: transparent;
+    border: 2px solid black;
+    border-radius: 5em;
+    width: 90px;
+}
+
+.go:hover {
+    background: black;
+    color: white;
+    cursor: pointer;
+}
