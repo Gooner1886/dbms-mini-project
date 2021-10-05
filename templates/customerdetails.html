@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block pagecss %}
+<link href="/static/styles/customerdetails.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% if error %}
+    <div class="alert alert-danger text-center font-weight-bold" role="alert">
+          {{ error }}!
+    </div>
+{% endif %}
+
+{% block body %}
+  <div class="container">
+    <div class="title">Hi! Please fill up your details 😊</div>
+    <div class="content">
+      <form action="/customer" method="post">
+        <div class="user-details">
+          <div class="input-box">
+            <span class="details">First Name</span>
+            <input type="text" placeholder="Enter your first name" name="F_name" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Last Name</span>
+            <input type="text" placeholder="Enter your last name" name="L_Name" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Email</span>
+            <input type="text" placeholder="Enter your email" name="Email" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Phone Number</span>
+            <input type="text" placeholder="Enter your number" name="Phone_No" required>
+          </div>
+          <!-- <div class="input-box">
+            <span class="details">Username</span>
+            <input type="text" placeholder="Enter your username" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Password</span>
+            <input type="text" placeholder="Enter your password" required>
+          </div> -->
+          <div class="input-box">
+            <span class="details">Address</span>
+            <input type="text" placeholder="Enter your address" name="Address" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Financial Details</span>
+            <input type="text" placeholder="Enter financial status (BPL or APL)" name="Financial_status" required>
+          </div>
+        </div>
+        <div class="button">
+          <input type="submit">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

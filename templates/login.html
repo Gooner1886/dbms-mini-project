@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if error %}
+    <div class="alert alert-danger text-center font-weight-bold" role="alert">
+          {{ error }}!
+    </div>
+{% endif %}
+
+<div class = "registrationform">
+ <form action="/login" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        </div>
+
+        <div class="form-group">
+            <input class="form-control" id = "password" name="password" placeholder="Password" type="password">
+        </div>
+
+        <button class="btn btn-primary" style = "background-color: #9e1b21; color: #f5e50a;" type="submit">Log In</button>
+
+        <p class = "login">Don't have an Account? <a href = "/register" style = "color:#9e1b21;">Register</a></p>
+
+    </form>
+</div>
+
+
+{% endblock %}

@@ -17,7 +17,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="rootroot"
+  password="Siddharth#52",
+  database="dbmsminiproject"
 )
 
 # mydb = mysql.connector.connect(
@@ -71,7 +72,52 @@ def home():
 
 @app.route("/decide")
 def decide():
-    return render_template("decide.html")
+    return render_template("decide.html" , title = "Decide")
+
+@app.route("/login", methods = ['GET', 'POST'])
+def login():
+
+    """Log user in"""
+
+    # Forget any user_id
+    session.clear()
+
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Query database for username
+        username_val = request.form.get("username")
+        check_account = "SELECT * FROM Customer WHERE Username = %s"
+        
+        rows = cur.execute(check_account, username_val)
+        mydb.commit()
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            error = 'Must Provide Username'
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            error = 'Must Provide Password'
+
+        # Ensure username exists and password is correct
+        elif len(rows) != 1 or not check_password_hash(rows[0]["Pass_word"], request.form.get("password")):
+            error = 'Invalid Credentials'
+
+        else:
+            # Remember which user has logged in
+            session["user_id"] = rows[0]["Account_ID"]
+
+            # Redirect user to home page
+            return redirect("/decide.html")
+
+        return render_template("login.html", error = error)
+
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html", title = "Log In")    
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
@@ -107,22 +153,51 @@ def register():
             
 
             # Inserting username and password into database
-            create_account = "INSERT INTO Account (username, pass_word) VALUES (%s, %s)" 
+            create_account = "INSERT INTO Customer (Username, Pass_word) VALUES (%s, %s)" 
             val = (request.form.get("username"),
                         generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
-            cur.execute(create_account, val)
-            """ cur.execute("SELECT * FROM Account")
-
-            myresult = cur.fetchone()
-
-            
-            print(myresult) """
+            cur.execute(create_account, val) 
             mydb.commit()
             print(cur.rowcount, "record inserted.")
+
+            select_session = "SELECT Account_ID FROM Customer WHERE Username = %s"
+            curr_username = request.form.get("username")
+            rows = cur.execute(select_session, curr_username)
+            print(rows)
+            session["user_id"] = rows[0]["Account_ID"]
             
 
-            return render_template('register.html')
+            return render_template('customerdetails.html')
         return render_template('register.html', error=error)
     else:
 
-        return render_template("register.html", title = "Register")    
+        return render_template("register.html", title = "Register")  
+
+@app.route("/customer", methods = ["GET", "POST"]) 
+def customer():
+    if request.method == "POST":
+        if not request.form.get("F_name"):
+            error = "Must enter First name"
+        elif not request.form.get("L_Name"):
+            error = "Must enter Last name" 
+        elif not request.form.get("Email"):
+            error = "Must enter Email Address"
+        elif not request.form.get("Phone_No"):
+            error = "Must enter Phone Number"
+        elif not request.form.get("Address"):
+            error = "Must enter address"
+        elif not request.form.get("Financial_status"):
+            error = "Must enter financial status"
+        else:
+            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = (%s)"
+            cvalues = (request.form.get("F_name"), request.form.get("L_Name"), request.form.get("Email"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Financial_status"), session["user_id"])
+            cur.execute(insert_cdetails, cvalues)
+            mydb.commit()
+
+            print(cur.rowcount, "Customer Record inserted")
+
+            return render_template("decide.html")
+        return render_template("customerdetails.html", error = error)                            
+    else:
+        return render_template("customerdetails.html")    
+         
