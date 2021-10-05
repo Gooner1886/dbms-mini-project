@@ -158,13 +158,17 @@ def register():
                         generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
             cur.execute(create_account, val) 
             mydb.commit()
-            print(cur.rowcount, "record inserted.")
+            print(cur.rowcount, "authentication record inserted.")
 
             select_session = "SELECT Account_ID FROM Customer WHERE Username = %s"
-            curr_username = request.form.get("username")
-            rows = cur.execute(select_session, curr_username)
-            print(rows)
-            session["user_id"] = rows[0]["Account_ID"]
+            curr_username = (request.form.get("username"),)
+            print(curr_username)
+            cur.execute(select_session, curr_username)
+            rows = cur.fetchall()
+            for row in rows:
+                print(row)
+            session["user_id"] = rows[0][0]
+            print(session["user_id"])
             
 
             return render_template('customerdetails.html')
@@ -189,7 +193,7 @@ def customer():
         elif not request.form.get("Financial_status"):
             error = "Must enter financial status"
         else:
-            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = (%s)"
+            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = %s"
             cvalues = (request.form.get("F_name"), request.form.get("L_Name"), request.form.get("Email"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Financial_status"), session["user_id"])
             cur.execute(insert_cdetails, cvalues)
             mydb.commit()
