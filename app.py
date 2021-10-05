@@ -150,8 +150,6 @@ def register():
             error = 'Confirmation does not match Password'
 
         else:
-            
-
             # Inserting username and password into database
             create_account = "INSERT INTO Customer (Username, Pass_word) VALUES (%s, %s)" 
             val = (request.form.get("username"),
@@ -199,5 +197,8 @@ def customer():
             return render_template("decide.html")
         return render_template("customerdetails.html", error = error)                            
     else:
-        return render_template("customerdetails.html")    
-         
+        return render_template("customerdetails.html")
+
+@app.route("/bookdetails")
+def decide():
+    return render_template("bookdetails.html", title="Details")

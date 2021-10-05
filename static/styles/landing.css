@@ -62,7 +62,6 @@ body, html {
   
   .navbar {
     height: 80px;
-    overflow: auto;
     width: 100%;
   }
   
