@@ -17,8 +17,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Siddharth#52",
-  database="dbmsminiproject"
+  password="rootroot",
+  database="thebookkeeper",
 )
 
 # mydb = mysql.connector.connect(
@@ -28,9 +28,7 @@ mydb = mysql.connector.connect(
 #   database="project"
 # )
 
-print(mydb) 
-
-cur = mydb.cursor()
+print(mydb)
 
 
 app = Flask(__name__)
@@ -119,11 +117,45 @@ def login():
     else:
         return render_template("login.html", title = "Log In")    
 
+<<<<<<< HEAD
 """ @app.route("/register", methods = ["GET", "POST"])
+=======
+
+@app.route("/register", methods=["GET", "POST"])
+>>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
 def register():
+    cur = mydb.cursor()
     if request.method == "POST":
+<<<<<<< HEAD
 
          
+=======
+        counter = 0
+        username = request.form.get("username")
+        for c in username:
+            counter = counter + 1
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            error = 'Must Provide Username'
+
+        # Ensure that username is between 2 and 15 characters
+        elif counter < 2 or counter > 15:
+            error = 'Username requirements are not met'
+
+        # Ensure that password was submitted
+        elif not request.form.get("password"):
+            error = 'Must Provide Password'
+
+        # Ensure that confirmation password was submitted
+        elif not request.form.get("confirmation"):
+            error = 'Must Provide Confirmation'
+
+
+        # Ensuring confirmation password matches password
+        elif request.form.get("confirmation") != request.form.get("password"):
+            error = 'Confirmation does not match Password'
+>>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
 
         else:
             # Inserting username and password into database
@@ -135,7 +167,7 @@ def register():
             print(cur.rowcount, "authentication record inserted.")
 
             select_session = "SELECT Account_ID FROM Customer WHERE Username = %s"
-            curr_username = (request.form.get("username"),)
+            curr_username = (request.form.get("username"), )
             print(curr_username)
             cur.execute(select_session, curr_username)
             rows = cur.fetchall()
@@ -143,6 +175,7 @@ def register():
                 print(row)
             session["user_id"] = rows[0][0]
             print(session["user_id"])
+            mydb.close()
             
 
             return render_template('customerdetails.html')
@@ -153,6 +186,7 @@ def register():
 
 @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
+    cur = mydb.cursor()
     if request.method == "POST":
         counter = 0
         username = request.form.get("Username")
@@ -199,8 +233,12 @@ def customer():
 
 @app.route("/bookdetails")
 def bookdetails():
+<<<<<<< HEAD
     return render_template("bookdetails.html", title="Details")
 
 @app.route("/thankyou")
 def thankyou():
     return render_template("thankyou.html", title="Thank You")    
+=======
+    return render_template("bookdetails.html", title="Details")
+>>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
