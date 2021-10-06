@@ -173,7 +173,7 @@ def register():
                 print(row)
             session["user_id"] = rows[0][0]
             print(session["user_id"])
-            mydb.close()
+            
             
 
             return render_template('decide.html')
@@ -230,9 +230,43 @@ def customer():
     else:
         return render_template("customerdetails.html") """
 
-@app.route("/bookdetails")
+@app.route("/bookdetails", methods=["GET", "POST"])
 def bookdetails():
-    return render_template("bookdetails.html", title="Details")
+    cur = mydb.cursor()
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("ISBN"):
+            error = 'Must Provide ISBN'
+        elif not request.form.get("Book_name"):
+            error = 'Must Provide Book_name'
+        elif not request.form.get("Genre"):
+            error = 'Must Provide Genre'
+        elif not request.form.get("Author"):
+            error = 'Must Provide Author'
+        elif not request.form.get("MRP"):
+            error = 'Must Provide MRP'
+        elif not request.form.get("SalePrice"):
+            error = 'Must Provide Sale Pricec'
+        elif not request.form.get("Description"):
+            error = 'Must Provide Description'                         
+        else:
+            # Inserting username and password into database
+            list_book = "INSERT INTO Books(ISBN, Book_name, Genre, Author, MRP, SalePrice, Description) VALUES(%s, %s, %s, %s, %s, %s, %s)" 
+            bookval = (request.form.get("ISBN"), request.form.get("Book_name"), request.form.get("Genre"), request.form.get("Author"), request.form.get("MRP"), request.form.get("SalePrice"), request.form.get("Description"))
+            cur.execute(list_book, bookval) 
+            mydb.commit()
+            print(cur.rowcount, "book record inserted.")
+
+            fill_sale = "INSERT INTO SALE(Account_ID, ISBN) VALUES (%s, %s)"
+            saleval = (session["user_id"], request.form.get("ISBN"))
+            cur.execute(fill_sale, saleval)
+            mydb.commit()
+            print(cur.rowcount, "sale record inserted")
+            return render_template("thankyou.html")
+        return render_template("bookdetails.html", error=error)
+
+    return render_template("bookdetails.html", title="Book Details")
 
 @app.route("/thankyou")
 def thankyou():
