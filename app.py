@@ -14,19 +14,19 @@ from helpers import login_required
 
 import mysql.connector
 
-mydb = mysql.connector.connect(
+""" mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-)
+) """
 
-# mydb = mysql.connector.connect(
-#   host="localhost",
-#   user="root",
-#   password="Siddharth#52",
-#   database="project"
-# )
+mydb = mysql.connector.connect(
+   host="localhost",
+   user="root",
+   password="Siddharth#52",
+   database="dbmsminiproject"
+)
 
 print(mydb)
 
@@ -142,17 +142,24 @@ def register():
         # Ensure that confirmation password was submitted
         elif not request.form.get("confirmation"):
             error = 'Must Provide Confirmation'
-
-
-        # Ensuring confirmation password matches password
-        elif request.form.get("confirmation") != request.form.get("password"):
-            error = 'Confirmation does not match Password'
+        elif not request.form.get("F_name"):
+            error = "Must enter First name"
+        elif not request.form.get("L_name"):
+            error = "Must enter Last name" 
+        elif not request.form.get("Email"):
+            error = "Must enter Email Address"
+        elif not request.form.get("Phone_No"):
+            error = "Must enter Phone Number"
+        elif not request.form.get("Address"):
+            error = "Must enter address"
+        elif not request.form.get("Financial_status"):
+            error = "Must enter financial status"    
 
         else:
             # Inserting username and password into database
-             
-            val = (request.form.get("username"),
-                        generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+            create_account = "INSERT INTO Customer(Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)" 
+            val = (username,
+                        generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8), request.form.get("F_name"), request.form.get("L_name"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
             cur.execute(create_account, val) 
             mydb.commit()
             print(cur.rowcount, "authentication record inserted.")
@@ -169,19 +176,20 @@ def register():
             mydb.close()
             
 
-            return render_template('customerdetails.html')
+            return render_template('decide.html')
         return render_template('register.html', error=error)
     else:
 
         return render_template("register.html", title = "Register")
        
-@app.route("/customer", methods = ["GET", "POST"]) 
+""" @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
     cur = mydb.cursor()
     if request.method == "POST":
         counter = 0
         username = request.form.get("Username")
         password = request.form.get("Password")
+        
         for c in username:
             counter = counter + 1
 
@@ -196,9 +204,9 @@ def customer():
         # Ensure that password was submitted
         elif not request.form.get("Password"):
             error = 'Must Provide Password'
-        elif not request.form.get("F_Name"):
+        elif not F_name:
             error = "Must enter First name"
-        elif not request.form.get("L_Name"):
+        elif not L_name:
             error = "Must enter Last name" 
         elif not request.form.get("Email"):
             error = "Must enter Email Address"
@@ -211,7 +219,7 @@ def customer():
         else:
             create_account = "INSERT INTO Customer (Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             cvalues = (username,
-                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), request.form.get("F_name"), request.form.get("L_name"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
+                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), F_name, L_name, request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
             cur.execute(create_account, cvalues)
             mydb.commit()
 
@@ -220,7 +228,7 @@ def customer():
             return render_template("decide.html")
         return render_template("customerdetails.html", error = error)                            
     else:
-        return render_template("customerdetails.html")
+        return render_template("customerdetails.html") """
 
 @app.route("/bookdetails")
 def bookdetails():
