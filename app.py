@@ -17,8 +17,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
-  password="Siddharth#52",
-  database="dbmsminiproject"
+  password="rootroot",
+  database="thebookkeeper",
 )
 
 # mydb = mysql.connector.connect(
@@ -28,9 +28,7 @@ mydb = mysql.connector.connect(
 #   database="project"
 # )
 
-print(mydb) 
-
-cur = mydb.cursor()
+print(mydb)
 
 
 app = Flask(__name__)
@@ -119,10 +117,11 @@ def login():
     else:
         return render_template("login.html", title = "Log In")    
 
-@app.route("/register", methods = ["GET", "POST"])
-def register():
-    if request.method == "POST":
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    cur = mydb.cursor()
+    if request.method == "POST":
         counter = 0
         username = request.form.get("username")
         for c in username:
@@ -156,13 +155,18 @@ def register():
                         generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
             cur.execute(create_account, val) 
             mydb.commit()
-            print(cur.rowcount, "record inserted.")
+            print(cur.rowcount, "authentication record inserted.")
 
             select_session = "SELECT Account_ID FROM Customer WHERE Username = %s"
-            curr_username = request.form.get("username")
-            rows = cur.execute(select_session, curr_username)
-            print(rows)
-            session["user_id"] = rows[0]["Account_ID"]
+            curr_username = (request.form.get("username"), )
+            print(curr_username)
+            cur.execute(select_session, curr_username)
+            rows = cur.fetchall()
+            for row in rows:
+                print(row)
+            session["user_id"] = rows[0][0]
+            print(session["user_id"])
+            mydb.close()
             
 
             return render_template('customerdetails.html')
@@ -173,6 +177,7 @@ def register():
 
 @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
+    cur = mydb.cursor()
     if request.method == "POST":
         if not request.form.get("F_name"):
             error = "Must enter First name"
@@ -187,7 +192,7 @@ def customer():
         elif not request.form.get("Financial_status"):
             error = "Must enter financial status"
         else:
-            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = (%s)"
+            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = %s"
             cvalues = (request.form.get("F_name"), request.form.get("L_Name"), request.form.get("Email"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Financial_status"), session["user_id"])
             cur.execute(insert_cdetails, cvalues)
             mydb.commit()
@@ -200,5 +205,5 @@ def customer():
         return render_template("customerdetails.html")
 
 @app.route("/bookdetails")
-def decide():
+def bookdetails():
     return render_template("bookdetails.html", title="Details")
