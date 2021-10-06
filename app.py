@@ -117,19 +117,11 @@ def login():
     else:
         return render_template("login.html", title = "Log In")    
 
-<<<<<<< HEAD
-""" @app.route("/register", methods = ["GET", "POST"])
-=======
 
 @app.route("/register", methods=["GET", "POST"])
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
 def register():
     cur = mydb.cursor()
     if request.method == "POST":
-<<<<<<< HEAD
-
-         
-=======
         counter = 0
         username = request.form.get("username")
         for c in username:
@@ -155,7 +147,6 @@ def register():
         # Ensuring confirmation password matches password
         elif request.form.get("confirmation") != request.form.get("password"):
             error = 'Confirmation does not match Password'
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
 
         else:
             # Inserting username and password into database
@@ -182,8 +173,8 @@ def register():
         return render_template('register.html', error=error)
     else:
 
-        return render_template("register.html", title = "Register")   """
-
+        return render_template("register.html", title = "Register")
+       
 @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
     cur = mydb.cursor()
@@ -233,12 +224,8 @@ def customer():
 
 @app.route("/bookdetails")
 def bookdetails():
-<<<<<<< HEAD
     return render_template("bookdetails.html", title="Details")
 
 @app.route("/thankyou")
 def thankyou():
     return render_template("thankyou.html", title="Thank You")    
-=======
-    return render_template("bookdetails.html", title="Details")
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
