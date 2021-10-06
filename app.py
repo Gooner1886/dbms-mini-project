@@ -119,39 +119,15 @@ def login():
     else:
         return render_template("login.html", title = "Log In")    
 
-@app.route("/register", methods = ["GET", "POST"])
+""" @app.route("/register", methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
 
-        counter = 0
-        username = request.form.get("username")
-        for c in username:
-            counter = counter + 1
-
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            error = 'Must Provide Username'
-
-        # Ensure that username is between 2 and 15 characters
-        elif counter < 2 or counter > 15:
-            error = 'Username requirements are not met'
-
-        # Ensure that password was submitted
-        elif not request.form.get("password"):
-            error = 'Must Provide Password'
-
-        # Ensure that confirmation password was submitted
-        elif not request.form.get("confirmation"):
-            error = 'Must Provide Confirmation'
-
-
-        # Ensuring confirmation password matches password
-        elif request.form.get("confirmation") != request.form.get("password"):
-            error = 'Confirmation does not match Password'
+         
 
         else:
             # Inserting username and password into database
-            create_account = "INSERT INTO Customer (Username, Pass_word) VALUES (%s, %s)" 
+             
             val = (request.form.get("username"),
                         generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
             cur.execute(create_account, val) 
@@ -173,12 +149,29 @@ def register():
         return render_template('register.html', error=error)
     else:
 
-        return render_template("register.html", title = "Register")  
+        return render_template("register.html", title = "Register")   """
 
 @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
     if request.method == "POST":
-        if not request.form.get("F_name"):
+        counter = 0
+        username = request.form.get("Username")
+        password = request.form.get("Password")
+        for c in username:
+            counter = counter + 1
+
+        # Ensure username was submitted
+        if not request.form.get("Username"):
+            error = 'Must Provide Username'
+
+        # Ensure that username is between 2 and 15 characters
+        elif counter < 2 or counter > 15:
+            error = 'Username requirements are not met'
+
+        # Ensure that password was submitted
+        elif not request.form.get("Password"):
+            error = 'Must Provide Password'
+        elif not request.form.get("F_Name"):
             error = "Must enter First name"
         elif not request.form.get("L_Name"):
             error = "Must enter Last name" 
@@ -191,9 +184,10 @@ def customer():
         elif not request.form.get("Financial_status"):
             error = "Must enter financial status"
         else:
-            insert_cdetails = "INSERT INTO Customer(F_Name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s) WHERE Account_Id = %s"
-            cvalues = (request.form.get("F_name"), request.form.get("L_Name"), request.form.get("Email"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Financial_status"), session["user_id"])
-            cur.execute(insert_cdetails, cvalues)
+            create_account = "INSERT INTO Customer (Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cvalues = (username,
+                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), request.form.get("F_name"), request.form.get("L_name"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
+            cur.execute(create_account, cvalues)
             mydb.commit()
 
             print(cur.rowcount, "Customer Record inserted")
@@ -204,5 +198,9 @@ def customer():
         return render_template("customerdetails.html")
 
 @app.route("/bookdetails")
-def decide():
+def bookdetails():
     return render_template("bookdetails.html", title="Details")
+
+@app.route("/thankyou")
+def thankyou():
+    return render_template("thankyou.html", title="Thank You")    
