@@ -72,7 +72,7 @@ def home():
 def decide():
     return render_template("decide.html" , title = "Decide")
 
-@app.route("/login", methods = ['GET', 'POST'])
+@app.route("/login", methods = ["GET", "POST"])
 def login():
 
     """Log user in"""
@@ -80,16 +80,17 @@ def login():
     # Forget any user_id
     session.clear()
 
-
+    cur = mydb.cursor()
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Query database for username
-        username_val = request.form.get("username")
-        check_account = "SELECT * FROM Customer WHERE Username = %s"
-        
-        rows = cur.execute(check_account, username_val)
-        mydb.commit()
+        select_session = "SELECT Account_ID, Username, Pass_word FROM Customer WHERE Username = %s"
+        curr_username = (request.form.get("username"), )
+        print(curr_username)
+        cur.execute(select_session, curr_username)
+        rows = cur.fetchall()
+        print(rows)
+        print(len(rows))
 
         # Ensure username was submitted
         if not request.form.get("username"):
@@ -100,19 +101,20 @@ def login():
             error = 'Must Provide Password'
 
         # Ensure username exists and password is correct
-        elif len(rows) != 1 or not check_password_hash(rows[0]["Pass_word"], request.form.get("password")):
+        elif len(rows) != 1 or not check_password_hash(rows[0][2], request.form.get("password")):
             error = 'Invalid Credentials'
 
         else:
-            # Remember which user has logged in
-            session["user_id"] = rows[0]["Account_ID"]
+            for row in rows:
+                print(row)
+            session["user_id"] = rows[0][0]
+            print(session["user_id"])
 
             # Redirect user to home page
-            return redirect("/decide.html")
+            return redirect("/decide")
 
         return render_template("login.html", error = error)
-
-
+        
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html", title = "Log In")    
@@ -271,3 +273,13 @@ def bookdetails():
 @app.route("/thankyou")
 def thankyou():
     return render_template("thankyou.html", title="Thank You")    
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to Homepage
+    return redirect("/")
