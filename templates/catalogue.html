@@ -1,33 +1,40 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} Catalogue {% endblock %} {% block
+body %}
 
-{% block title %}
-    Catalogue
-{% endblock %}
+<div style="width: 100%">
+  <div style="text-align: center; margin-top: 20px; margin-bottom: 20px">
+    <h1>Book Catalogue</h1>
+    <h3 style="margin-top: 20px">Cash in hand: {{ bal[0][0] }}</h3>
+  </div>
+</div>
 
-{% block body %}
-    <div style="width:100%">
-        <table style="width:100%" id="tables">
-        <tr>
-        <th>Symbol</th>
-        <th>Company</th>
-        <th>Shares</th>
-        <th>Price($)</th>
-        <th>Total($)</th>
-        </tr>
-        {% for i in range(5) %}
-            <tr>
-                <td>Harry Potter</td>
-                <td>JK Rowling</td>
-                <td>Fiction</td>
-                <td>Good Condition</td>
-                <td>299</td>
-            </tr>
-        {% endfor %}
-    </div>
-    <div style="width:100%">
-        <h3>Cash in hand = XYZ</h3>
-        <br>
-        <br>
-    </div>
+<div style="width: 100%">
+  <form action="/catalogue" method="POST">
+    <table style="width: 100%" id="tables">
+      <tr>
+        <th>ISBN</th>
+        <th>Book Name</th>
+        <th>Genre</th>
+        <th>Author</th>
+        <th>MRP</th>
+        <th>SalePrice</th>
+        <th>Description</th>
+        <th>Purchase</th>
+      </tr>
+      {% for i in range(lenrow) %}
+      <tr>
+        <td>{{ rows[i][0] }}</td>
+        <td>{{ rows[i][1] }}</td>
+        <td>{{ rows[i][2] }}</td>
+        <td>{{ rows[i][3] }}</td>
+        <td>{{ rows[i][4] }}</td>
+        <td>{{ rows[i][5] }}</td>
+        <td>{{ rows[i][6] }}</td>
+        <td><button class="btn btn-success" name="ISBN" value="{{ rows[i][0] }}" type="submit">Add to cart</button></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </form>
+</div>
 
 {% endblock %}

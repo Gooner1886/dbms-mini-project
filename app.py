@@ -284,11 +284,24 @@ def thankyou():
     return render_template("thankyou.html", title="Thank You")    
 
 
-@app.route("/catalogue")
+@app.route("/catalogue", methods = ["GET", "POST"])
 def catalogue():
-    cur = mydb.cursor()
-    select_books = "SELECT * FROM Books"
-    cur.execute(select_books)
-    rows = cur.fetchall()
-    print(rows)
-    return render_template("catalogue.html", title="Catalogue of Books", rows = rows)
+    if request.method == "POST":
+        ISBN = request.form["ISBN"]
+        print(ISBN)
+
+        return redirect("/catalogue")
+    else:
+        cur = mydb.cursor()
+        select_books = "SELECT * FROM Books"
+        cur.execute(select_books)
+        rows = cur.fetchall()
+        lenrow = len(rows)
+        print(lenrow)
+        print(rows)
+        get_balance = "SELECT Balance FROM Customer WHERE Account_ID = %s"
+        current_session = (session["user_id"], )
+        cur.execute(get_balance, current_session)
+        bal = cur.fetchall()
+        print(bal)
+        return render_template("catalogue.html", title="Catalogue of Books", rows = rows, lenrow = lenrow, bal = bal)
