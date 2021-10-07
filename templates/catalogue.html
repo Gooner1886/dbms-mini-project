@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Catalogue
+{% endblock %}
+
+{% block body %}
+    <div style="width:100%">
+        <table style="width:100%" id="tables">
+        <tr>
+        <th>Symbol</th>
+        <th>Company</th>
+        <th>Shares</th>
+        <th>Price($)</th>
+        <th>Total($)</th>
+        </tr>
+        {% for i in range(5) %}
+            <tr>
+                <td>Harry Potter</td>
+                <td>JK Rowling</td>
+                <td>Fiction</td>
+                <td>Good Condition</td>
+                <td>299</td>
+            </tr>
+        {% endfor %}
+    </div>
+    <div style="width:100%">
+        <h3>Cash in hand = XYZ</h3>
+        <br>
+        <br>
+    </div>
+
+{% endblock %}

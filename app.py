@@ -10,19 +10,19 @@ from helpers import login_required
 import mysql.connector
 from functools import wraps
 
-mydb = mysql.connector.connect(
+""" mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-)
+) """
 
-# mydb = mysql.connector.connect(
-#    host="localhost",
-#    user="root",
-#    password="Siddharth#52",
-#    database="dbmsminiproject"
-# )
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Siddharth#52",
+    database="dbmsminiproject"
+)
 
 print(mydb)
 
@@ -84,13 +84,6 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            error = "Must provide Username"
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            error = "Must provide Password"
 
         # Query database for username
         qry = ("SELECT * FROM Customer WHERE Username=%s")
@@ -99,18 +92,27 @@ def login():
         result = cur.fetchall()
         print(result)
 
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            error = "Must provide Username"
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            error = "Must provide Password"
+
         # Ensure username exists and password is correct
-        if len(result) != 1 or not check_password_hash(result[0][2], password):
+        elif len(result) != 1 or not check_password_hash(result[0][2], password):
             print("invalid username and/or password")
-            return redirect("/login")
+            error = "Invalid Credentials"
 
         # Remember which user has logged in
-        session["user_id"] = result[0][0]
+        else:
+            session["user_id"] = result[0][0]
+            # Redirect user to home page
+            print("Logged in Successfully!")
+            return redirect("/decide")
 
-        # Redirect user to home page
-        print("Logged in Successfully!")
-        return redirect("/decide")
-
+        return render_template("login.html", error = error)
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
@@ -281,12 +283,7 @@ def bookdetails():
 def thankyou():
     return render_template("thankyou.html", title="Thank You")    
 
-@app.route("/logout")
-def logout():
-    """Log user out"""
 
-    # Forget any user_id
-    session.clear()
-
-    # Redirect user to Homepage
-    return redirect("/")
+@app.route("/catalogue")
+def catalogue():
+    return render_template("catalogue.html", title="Catalogue of Books")
