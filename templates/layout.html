@@ -18,7 +18,7 @@
 
         <link href="/static/styles/main.css" type="text/css" rel="stylesheet">
         <link href="/static/styles/decide.css" type="text/css" rel="stylesheet">
-
+        <link href="/static/styles/landing.css" rel="stylesheet">
         {% block pagecss %}
         {% endblock %}
 
@@ -45,6 +45,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar">
                   {% if session.user_id %}
+
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
@@ -76,6 +77,26 @@
             </div>
           </div>  
         </nav> -->
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+            <div class="navigation">
+                <div class="navleft">
+                    <a class="logo" href="/">The Book Keeper</a>
+                </div>
+                {% if session.user_id %}
+                    <div class="navright">
+                        <a class="links" href="/">Cart</a>
+                        <a class="links" href="/logout">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="navright">
+                        <a class="links" href="/login">Login</a>
+                        <a class="links" href="/register">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+        </nav>
+
 
         {% with messages = get_flashed_messages() %}
           {% if messages %}

@@ -1,37 +1,33 @@
 import os
-
 import time
 from datetime import datetime
-
 from flask import Flask, redirect, render_template, flash, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
-""" from flask_mysqldb import MySQL """
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from helpers import login_required
-
 import mysql.connector
+from functools import wraps
 
-""" mydb = mysql.connector.connect(
+mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-) """
-
-mydb = mysql.connector.connect(
-   host="localhost",
-   user="root",
-   password="Siddharth#52",
-   database="dbmsminiproject"
 )
+
+# mydb = mysql.connector.connect(
+#    host="localhost",
+#    user="root",
+#    password="Siddharth#52",
+#    database="dbmsminiproject"
+# )
 
 print(mydb)
 
-
 app = Flask(__name__)
+app.run(debug=True)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -56,73 +52,84 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-""" app.config['MySQL_HOST'] = 'localhost'
-app.config['MySQL_USER'] = 'root'
-app.config['MySQL_PASSWORD'] = 'Siddharth#52'
-app.config['MySQL_DB'] = 'project """
-
-""" mysql = MySQL(app) """
+def login_required(f):
+    """
+    Decorate routes to require login.
+    http://flask.pocoo.org/docs/1.0/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
+
 @app.route("/decide")
 def decide():
     return render_template("decide.html" , title = "Decide")
 
-@app.route("/login", methods = ["GET", "POST"])
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-
-    """Log user in"""
-
-    # Forget any user_id
-    session.clear()
-
     cur = mydb.cursor()
+    session.clear()
+    # User reached route via POST (as by submitting a form via POST)
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        select_session = "SELECT Account_ID, Username, Pass_word FROM Customer WHERE Username = %s"
-        curr_username = (request.form.get("username"), )
-        print(curr_username)
-        cur.execute(select_session, curr_username)
-        rows = cur.fetchall()
-        print(rows)
-        print(len(rows))
-
+        username = request.form.get("username")
+        password = request.form.get("password")
         # Ensure username was submitted
         if not request.form.get("username"):
-            error = 'Must Provide Username'
+            error = "Must provide Username"
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            error = 'Must Provide Password'
+            error = "Must provide Password"
+
+        # Query database for username
+        qry = ("SELECT * FROM Customer WHERE Username=%s")
+        cur.execute(qry, (username,))
+
+        result = cur.fetchall()
+        print(result)
 
         # Ensure username exists and password is correct
-        elif len(rows) != 1 or not check_password_hash(rows[0][2], request.form.get("password")):
-            error = 'Invalid Credentials'
+        if len(result) != 1 or not check_password_hash(result[0][2], password):
+            print("invalid username and/or password")
+            return redirect("/login")
 
-        else:
-            for row in rows:
-                print(row)
-            session["user_id"] = rows[0][0]
-            print(session["user_id"])
+        # Remember which user has logged in
+        session["user_id"] = result[0][0]
 
-            # Redirect user to home page
-            return redirect("/decide")
+        # Redirect user to home page
+        print("Logged in Successfully!")
+        return redirect("/decide")
 
-        return render_template("login.html", error = error)
-        
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html", title = "Log In")    
+        return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+    # Forget any user_id
+    session.clear()
+    # Redirect user to login form
+    return redirect("/")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     cur = mydb.cursor()
+    session.clear()
+
     if request.method == "POST":
         counter = 0
         username = request.form.get("username")

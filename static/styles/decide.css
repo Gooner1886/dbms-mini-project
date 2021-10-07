@@ -1,12 +1,14 @@
 .parent {
-    height: 90vh;
-    width: 100vw;
+    height: 90%;
+    width: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
-    
+
     justify-content: flex-start;
     align-items: center;
+
+    background: linear-gradient(to top right, #fc2c77 0%, #6c4079 100%);
 }
 
 .Heading {
@@ -16,13 +18,14 @@
 }
 
 .choosebox {
-    width: 50%;
-    height: 45vh;
-    /* background-color: aquamarine; */
+    width: 60%;
+    height: 65vh;
+    background-color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
+    margin-top: 40px;
 }
 
 .leftbox {
@@ -39,15 +42,15 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    
+
     justify-content: center;
     align-items: center;
 }
 
 .imgs {
-    height: 250px;
-    width: 225px;
-}  
+    height: 300px;
+    width: 300px;
+}
 
 .head {
     color: black;
