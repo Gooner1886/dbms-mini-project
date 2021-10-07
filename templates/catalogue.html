@@ -8,26 +8,34 @@
     <div style="width:100%">
         <table style="width:100%" id="tables">
         <tr>
-        <th>Symbol</th>
-        <th>Company</th>
-        <th>Shares</th>
-        <th>Price($)</th>
-        <th>Total($)</th>
+        <th>ISBN</th>
+        <th>Book Name</th>
+        <th>Genre</th>
+        <th>Author</th>
+        <th>MRP</th>
+        <th>SalePrice</th>
+        <th>Description</th>
+        <th>Purchase</th>
         </tr>
-        {% for i in range(5) %}
+        {% for i in range(len(rows)) %}
             <tr>
-                <td>Harry Potter</td>
-                <td>JK Rowling</td>
-                <td>Fiction</td>
-                <td>Good Condition</td>
-                <td>299</td>
+                <td>{{ rows[i][0] }}</td>
+                <td>{{ rows[i][1] }}</td>
+                <td>{{ rows[i][2] }}</td>
+                <td>{{ rows[i][3] }}</td>
+                <td>{{ rows[i][4] }}</td>
+                <td>{{ rows[i][5] }}</td>
+                <td>{{ rows[i][6] }}</td>
+                <td> Add to Cart</td>
             </tr>
         {% endfor %}
+        </table>
     </div>
     <div style="width:100%">
-        <h3>Cash in hand = XYZ</h3>
-        <br>
-        <br>
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+            <h1>Book Catalogue</h1>
+            <h3 style="margin-top: 20px;">Cash in hand: 2000</h3>
+        </div>
     </div>
 
 {% endblock %}
