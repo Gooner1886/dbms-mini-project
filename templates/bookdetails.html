@@ -1,105 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block body %}
 
-<head>
-    <!-- Required meta tags-->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Colorlib Templates">
-    <meta name="author" content="Colorlib">
-    <meta name="keywords" content="Colorlib Templates">
-
-    <!-- Title Page-->
-    <title>Book Details</title>
-
-    <!-- Icons font CSS-->
-    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <!-- Font special for pages-->
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <!-- Vendor CSS-->
-    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
-    <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
-
-    <!-- Main CSS-->
-    <link href="/static/styles/bookdetails.css" type="text/css" rel="stylesheet">
-</head>
-
-<body>
-<div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
-    <div class="wrapper wrapper--w680">
-        <div class="card card-4">
-            <div class="card-body">
-                <h2 class="title">Book details</h2>
-                <form method="POST">
-                    <div class="row row-space">
-                        <div class="col-2">
-                            <div class="input-group">
-                                <label class="label">Book name</label>
-                                <input class="input--style-4" type="text" name="first_name">
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="input-group">
-                                <label class="label">genre</label>
-                                <input class="input--style-4" type="text" name="last_name">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row row-space">
-                        <div class="col-2">
-                            <div class="input-group">
-                                <label class="label">description</label>
-                                <input class="input--style-4" type="email" name="email">
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="input-group">
-                                <label class="label">author</label>
-                                <input class="input--style-4" type="text" name="phone">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row row-space">
-                        <div class="col-2">
-                            <div class="input-group">
-                                <label class="label">price</label>
-                                <input class="input--style-4" type="email" name="email">
-                            </div>
-                        </div>
-
-                        <div class="row row-space">
-                            <div class="col-2">
-                                <div class="input-group">
-                                    <label class="label">ISBN</label>
-                                    <input class="input--style-4" type="email" name="email">
-                                </div>
-                            </div>
-
-
-                            <div class="p-t-15">
-                                <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
-                            </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class = "abouthead">
+    <p style = "display:inline;">List your Book for others to avail!</p>
 </div>
 
-<!-- Jquery JS-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<!-- Vendor JS-->
-<script src="vendor/select2/select2.min.js"></script>
-<script src="vendor/datepicker/moment.min.js"></script>
-<script src="vendor/datepicker/daterangepicker.js"></script>
+{% endblock %}
 
-<!-- Main JS-->
-<script src="js/global.js"></script>
+{% block content %}
 
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+{% if error %}
+    <div class="alert alert-danger text-center font-weight-bold" role="alert">
+          {{ error }}!
+    </div>
+{% endif %}
 
-</html>
-<!-- end document-->
+<div class = "registrationform">
+ <form action="/bookdetails" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="ISBN" placeholder="ISBN" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" id = "Book_name" name="Book_name" placeholder="Book Name" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="Genre" placeholder="Genre" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Author Name" name="Author" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="MRP of Book" name="MRP" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Sale Price of Book" name="SalePrice" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Description Of book" name="Description" required>
+        </div>
+        <button class="btn btn-primary" style = "background-color: #9e1b21; color: #f5e50a;" type="submit">List Book</button>
+    </form>
+</div>
+{% endblock %}

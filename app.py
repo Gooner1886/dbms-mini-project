@@ -1,18 +1,14 @@
 import os
-
 import time
 from datetime import datetime
-
 from flask import Flask, redirect, render_template, flash, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
-""" from flask_mysqldb import MySQL """
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from helpers import login_required
-
 import mysql.connector
+from functools import wraps
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -22,16 +18,16 @@ mydb = mysql.connector.connect(
 )
 
 # mydb = mysql.connector.connect(
-#   host="localhost",
-#   user="root",
-#   password="Siddharth#52",
-#   database="project"
+#    host="localhost",
+#    user="root",
+#    password="Siddharth#52",
+#    database="dbmsminiproject"
 # )
 
 print(mydb)
 
-
 app = Flask(__name__)
+app.run(debug=True)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -56,80 +52,85 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-""" app.config['MySQL_HOST'] = 'localhost'
-app.config['MySQL_USER'] = 'root'
-app.config['MySQL_PASSWORD'] = 'Siddharth#52'
-app.config['MySQL_DB'] = 'project """
-
-""" mysql = MySQL(app) """
+def login_required(f):
+    """
+    Decorate routes to require login.
+    http://flask.pocoo.org/docs/1.0/patterns/viewdecorators/
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
+
 @app.route("/decide")
 def decide():
     return render_template("decide.html" , title = "Decide")
 
-@app.route("/login", methods = ['GET', 'POST'])
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-
-    """Log user in"""
-
-    # Forget any user_id
+    cur = mydb.cursor()
     session.clear()
-
-
+    # User reached route via POST (as by submitting a form via POST)
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        # Query database for username
-        username_val = request.form.get("username")
-        check_account = "SELECT * FROM Customer WHERE Username = %s"
-        
-        rows = cur.execute(check_account, username_val)
-        mydb.commit()
-
+        username = request.form.get("username")
+        password = request.form.get("password")
         # Ensure username was submitted
         if not request.form.get("username"):
-            error = 'Must Provide Username'
+            error = "Must provide Username"
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            error = 'Must Provide Password'
+            error = "Must provide Password"
+
+        # Query database for username
+        qry = ("SELECT * FROM Customer WHERE Username=%s")
+        cur.execute(qry, (username,))
+
+        result = cur.fetchall()
+        print(result)
 
         # Ensure username exists and password is correct
-        elif len(rows) != 1 or not check_password_hash(rows[0]["Pass_word"], request.form.get("password")):
-            error = 'Invalid Credentials'
+        if len(result) != 1 or not check_password_hash(result[0][2], password):
+            print("invalid username and/or password")
+            return redirect("/login")
 
-        else:
-            # Remember which user has logged in
-            session["user_id"] = rows[0]["Account_ID"]
+        # Remember which user has logged in
+        session["user_id"] = result[0][0]
 
-            # Redirect user to home page
-            return redirect("/decide.html")
-
-        return render_template("login.html", error = error)
-
+        # Redirect user to home page
+        print("Logged in Successfully!")
+        return redirect("/decide")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html", title = "Log In")    
+        return render_template("login.html")
 
-<<<<<<< HEAD
-""" @app.route("/register", methods = ["GET", "POST"])
-=======
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+    # Forget any user_id
+    session.clear()
+    # Redirect user to login form
+    return redirect("/")
+
 
 @app.route("/register", methods=["GET", "POST"])
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
 def register():
     cur = mydb.cursor()
-    if request.method == "POST":
-<<<<<<< HEAD
+    session.clear()
 
-         
-=======
+    if request.method == "POST":
         counter = 0
         username = request.form.get("username")
         for c in username:
@@ -150,18 +151,24 @@ def register():
         # Ensure that confirmation password was submitted
         elif not request.form.get("confirmation"):
             error = 'Must Provide Confirmation'
-
-
-        # Ensuring confirmation password matches password
-        elif request.form.get("confirmation") != request.form.get("password"):
-            error = 'Confirmation does not match Password'
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
+        elif not request.form.get("F_name"):
+            error = "Must enter First name"
+        elif not request.form.get("L_name"):
+            error = "Must enter Last name" 
+        elif not request.form.get("Email"):
+            error = "Must enter Email Address"
+        elif not request.form.get("Phone_No"):
+            error = "Must enter Phone Number"
+        elif not request.form.get("Address"):
+            error = "Must enter address"
+        elif not request.form.get("Financial_status"):
+            error = "Must enter financial status"    
 
         else:
             # Inserting username and password into database
-             
-            val = (request.form.get("username"),
-                        generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+            create_account = "INSERT INTO Customer(Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)" 
+            val = (username,
+                        generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8), request.form.get("F_name"), request.form.get("L_name"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
             cur.execute(create_account, val) 
             mydb.commit()
             print(cur.rowcount, "authentication record inserted.")
@@ -175,22 +182,23 @@ def register():
                 print(row)
             session["user_id"] = rows[0][0]
             print(session["user_id"])
-            mydb.close()
+            
             
 
-            return render_template('customerdetails.html')
+            return render_template('decide.html')
         return render_template('register.html', error=error)
     else:
 
-        return render_template("register.html", title = "Register")   """
-
-@app.route("/customer", methods = ["GET", "POST"]) 
+        return render_template("register.html", title = "Register")
+       
+""" @app.route("/customer", methods = ["GET", "POST"]) 
 def customer():
     cur = mydb.cursor()
     if request.method == "POST":
         counter = 0
         username = request.form.get("Username")
         password = request.form.get("Password")
+        
         for c in username:
             counter = counter + 1
 
@@ -205,9 +213,9 @@ def customer():
         # Ensure that password was submitted
         elif not request.form.get("Password"):
             error = 'Must Provide Password'
-        elif not request.form.get("F_Name"):
+        elif not F_name:
             error = "Must enter First name"
-        elif not request.form.get("L_Name"):
+        elif not L_name:
             error = "Must enter Last name" 
         elif not request.form.get("Email"):
             error = "Must enter Email Address"
@@ -220,7 +228,7 @@ def customer():
         else:
             create_account = "INSERT INTO Customer (Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             cvalues = (username,
-                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), request.form.get("F_name"), request.form.get("L_name"), request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
+                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), F_name, L_name, request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
             cur.execute(create_account, cvalues)
             mydb.commit()
 
@@ -229,16 +237,46 @@ def customer():
             return render_template("decide.html")
         return render_template("customerdetails.html", error = error)                            
     else:
-        return render_template("customerdetails.html")
+        return render_template("customerdetails.html") """
 
-@app.route("/bookdetails")
+@app.route("/bookdetails", methods=["GET", "POST"])
 def bookdetails():
-<<<<<<< HEAD
-    return render_template("bookdetails.html", title="Details")
+    cur = mydb.cursor()
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("ISBN"):
+            error = 'Must Provide ISBN'
+        elif not request.form.get("Book_name"):
+            error = 'Must Provide Book_name'
+        elif not request.form.get("Genre"):
+            error = 'Must Provide Genre'
+        elif not request.form.get("Author"):
+            error = 'Must Provide Author'
+        elif not request.form.get("MRP"):
+            error = 'Must Provide MRP'
+        elif not request.form.get("SalePrice"):
+            error = 'Must Provide Sale Pricec'
+        elif not request.form.get("Description"):
+            error = 'Must Provide Description'                         
+        else:
+            # Inserting username and password into database
+            list_book = "INSERT INTO Books(ISBN, Book_name, Genre, Author, MRP, SalePrice, Description) VALUES(%s, %s, %s, %s, %s, %s, %s)" 
+            bookval = (request.form.get("ISBN"), request.form.get("Book_name"), request.form.get("Genre"), request.form.get("Author"), request.form.get("MRP"), request.form.get("SalePrice"), request.form.get("Description"))
+            cur.execute(list_book, bookval) 
+            mydb.commit()
+            print(cur.rowcount, "book record inserted.")
+
+            fill_sale = "INSERT INTO SALE(Account_ID, ISBN) VALUES (%s, %s)"
+            saleval = (session["user_id"], request.form.get("ISBN"))
+            cur.execute(fill_sale, saleval)
+            mydb.commit()
+            print(cur.rowcount, "sale record inserted")
+            return render_template("thankyou.html")
+        return render_template("bookdetails.html", error=error)
+
+    return render_template("bookdetails.html", title="Book Details")
 
 @app.route("/thankyou")
 def thankyou():
     return render_template("thankyou.html", title="Thank You")    
-=======
-    return render_template("bookdetails.html", title="Details")
->>>>>>> bb0bd57801f317a54fc9ae0dbfa3d79d871f7a57
