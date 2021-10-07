@@ -286,4 +286,9 @@ def thankyou():
 
 @app.route("/catalogue")
 def catalogue():
-    return render_template("catalogue.html", title="Catalogue of Books")
+    cur = mydb.cursor()
+    select_books = "SELECT * FROM Books"
+    cur.execute(select_books)
+    rows = cur.fetchall()
+    print(rows)
+    return render_template("catalogue.html", title="Catalogue of Books", rows = rows)
