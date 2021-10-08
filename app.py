@@ -10,19 +10,19 @@ from helpers import login_required
 import mysql.connector
 from functools import wraps
 
-mydb = mysql.connector.connect(
+""" mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-)
+) """
 
-# mydb = mysql.connector.connect(
-#     host="localhost",
-#     user="root",
-#     password="Siddharth#52",
-#     database="dbmsminiproject"
-# )
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Siddharth#52",
+    database="dbmsminiproject"
+)
 
 print(mydb)
 
