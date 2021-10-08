@@ -193,54 +193,7 @@ def register():
 
         return render_template("register.html", title = "Register")
        
-""" @app.route("/customer", methods = ["GET", "POST"]) 
-def customer():
-    cur = mydb.cursor()
-    if request.method == "POST":
-        counter = 0
-        username = request.form.get("Username")
-        password = request.form.get("Password")
-        
-        for c in username:
-            counter = counter + 1
-
-        # Ensure username was submitted
-        if not request.form.get("Username"):
-            error = 'Must Provide Username'
-
-        # Ensure that username is between 2 and 15 characters
-        elif counter < 2 or counter > 15:
-            error = 'Username requirements are not met'
-
-        # Ensure that password was submitted
-        elif not request.form.get("Password"):
-            error = 'Must Provide Password'
-        elif not F_name:
-            error = "Must enter First name"
-        elif not L_name:
-            error = "Must enter Last name" 
-        elif not request.form.get("Email"):
-            error = "Must enter Email Address"
-        elif not request.form.get("Phone_No"):
-            error = "Must enter Phone Number"
-        elif not request.form.get("Address"):
-            error = "Must enter address"
-        elif not request.form.get("Financial_status"):
-            error = "Must enter financial status"
-        else:
-            create_account = "INSERT INTO Customer (Username, Pass_word, F_name, L_name, Phone_No, Address, Email, Financial_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cvalues = (username,
-                        generate_password_hash(password, method='pbkdf2:sha256', salt_length=8), F_name, L_name, request.form.get("Phone_No"), request.form.get("Address"), request.form.get("Email"), request.form.get("Financial_status"))
-            cur.execute(create_account, cvalues)
-            mydb.commit()
-
-            print(cur.rowcount, "Customer Record inserted")
-
-            return render_template("decide.html")
-        return render_template("customerdetails.html", error = error)                            
-    else:
-        return render_template("customerdetails.html") """
-
+       
 @app.route("/bookdetails", methods=["GET", "POST"])
 def bookdetails():
     cur = mydb.cursor()
