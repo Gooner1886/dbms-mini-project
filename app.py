@@ -72,7 +72,7 @@ def home():
 
 @app.route("/decide")
 def decide():
-    return render_template("decide.html" , title = "Decide")
+    return render_template("decide.html", title = "Decide")
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -318,17 +318,77 @@ def cart():
         return redirect("/cart")
 
 
+bookOrderIsbn = []
+sellerlist=[]
+
+
 @app.route("/payment", methods=["GET", "POST"])
 def payment():
     cur = mydb.cursor()
-    select_cart = "SELECT * FROM Cart WHERE Account_ID=%s"
-    cur.execute(select_cart, (session["user_id"],))
-    cart = cur.fetchall()
-    lenrow=len(cart)
-    print("Checkout")
-    print(cart)
+    if request.method == "GET":
+        select_cart = "SELECT * FROM Cart WHERE Account_ID=%s"
+        cur.execute(select_cart, (session["user_id"],))
+        cart = cur.fetchall()
 
-    cartprice = "SELECT SUM(SalePrice) FROM Cart WHERE Account_ID=%s"
-    cur.execute(cartprice, (session["user_id"],))
-    price=cur.fetchall()
-    return render_template("checkout.html", kart=cart, lenrow=lenrow, price=price)
+        lenrow=len(cart)
+        print("Checkout")
+        print(cart)
+
+        for i in range(lenrow):
+            bookOrderIsbn.append(cart[i][2])
+        print("Checkout")
+        print(bookOrderIsbn)
+        print(len(bookOrderIsbn))
+
+        cartprice = "SELECT SUM(SalePrice) FROM Cart WHERE Account_ID=%s"
+        cur.execute(cartprice, (session["user_id"],))
+        price=cur.fetchall()
+        return render_template("checkout.html", kart=cart, lenrow=lenrow, price=price)
+    elif request.method == "POST":
+        fetch_Seller = "SELECT Account_ID FROM SALE WHERE ISBN=%s"
+        print(len(bookOrderIsbn))
+        for i in range(len(bookOrderIsbn)):
+            cur.execute(fetch_Seller, (bookOrderIsbn[i], ))
+            sellers = cur.fetchall()
+            print("sellers")
+            print(sellers)
+            sellerlist.append(sellers[i][0])
+        print("sellerlist")
+        print(sellerlist)
+
+        # TransactionLogic
+        cartprice = "SELECT SUM(SalePrice) FROM Cart WHERE Account_ID=%s"
+        cur.execute(cartprice, (session["user_id"],))
+        price=cur.fetchall()
+        print("Price Fetched")
+        money_from_buyer = "UPDATE Customer SET Balance= Balance - %s WHERE Account_ID=%s"
+        cur.execute(money_from_buyer, (price[0][0], session["user_id"], ))
+        mydb.commit()
+        print("Money deducted from buyer")
+
+        money_to_seller = "UPDATE Customer SET Balance= Balance + %s WHERE Account_ID=%s"
+        insert_into_payment = "INSERT INTO PAYMENT(Account_ID, Seller_ID, Payment_Type, PaymentDate) values (%s, %s, %s, %s)"
+        for i in range(len(sellerlist)):
+            print("Entered Loop")
+            bookSalePrice= "SELECT SalePrice FROM Books WHERE ISBN=%s"
+            cur.execute(bookSalePrice, (bookOrderIsbn[i], ))
+            print("Received Saleprice")
+            bookprice = cur.fetchall()
+            print(bookprice)
+            cur.execute(money_to_seller, (bookprice[0][0], sellerlist[i]), )
+            mydb.commit()
+            print("Payment Seller Record Inserted")
+            now = datetime.now()
+            cur.execute(insert_into_payment, (session["user_id"], sellerlist[i], "PURCHASE", now, ))
+            mydb.commit()
+            print("Payment Record Inserted")
+
+            remove_from_cart="DELETE FROM CART WHERE Account_ID=%s"
+            cur.execute(remove_from_cart, (session["user_id"], ))
+            print("Removed from cart")
+            remove_from_books="DELETE FROM Books WHERE ISBN=%s"
+            cur.execute(remove_from_books, (bookOrderIsbn[i], ))
+            print("Removed from books")
+
+        bookOrderIsbn.clear()
+        return render_template("thankyou.html", title="Thank You")
