@@ -6,22 +6,27 @@
 
 {% block body %}
     <div style="padding-bottom: 200px; width:100%;">
-        <table style="width:100%" id="tables" class="container p-5">
+        <div style="width: 100%">
+            <h1 style="text-align: center">Cart</h1>
+            <a style="margin-top: 20px; text-decoration: none; align-self: center; padding: 20px; border-radius: 10px; " class="btn-primary" href="/catalogue">Back to Shopping</a>
+        </div>
+        <table style="width:100%; margin-top: 50px;" id="tables" class="container p-5">
             <tr>
-                <th>Cart_ID</th>
-                <th>Account_ID</th>
+                <th>Index</th>
                 <th>ISBN</th>
+                <th>Book Name</th>
                 <th>Sale Price</th>
+                <th>Remove From Cart</th>
             </tr>
-            {% for i in range(2) %}
+            {% for i in range(cartlen) %}
                 <tr>
-                    <td>hardcoded Cart ID</td>
-                    <td>hardcoded Account_ID</td>
-                    <td>hardcoded ISBN</td>
-                    <td>hardcoded Sale Price</td>
+                    <td>{{ i+1 }}</td>
+                    <td>{{ cart[i][2] }}</td>
+                    <td>{{ cart[i][3] }}</td>
+                    <td>{{ cart[i][4] }}</td>
                     <td>
                         <form action="/cart" method="post">
-                            <button class="btn btn-primary" name="ISBN" value="hardcoded ISBN" type="submit">Remove</button>
+                            <button class="btn btn-primary" name="CARTISBN" value="{{ cart[i][2] }}" type="submit">Remove</button>
                         </form>
                     </td>
                 </tr>
@@ -29,7 +34,7 @@
         </table>
     </div>
     <div style="width:100%">
-        <h3 >Subtotal (hardcoded no. of items) = ₹ hardcoded total price</h3>
+        <h3 >Subtotal ({{ cartlen }}) = ₹ hardcoded total price</h3>
         <br>
         <form action="/cart" method="post">
             <a class="btn btn-primary" id="submit" name="submit" value="hardcoded total price" href="/catalogue">Checkout</a></form>
