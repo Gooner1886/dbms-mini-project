@@ -263,19 +263,6 @@ def catalogue():
         mydb.commit()
         print("Cart details inserted")
 
-        """ select_book = "SELECT * FROM Books WHERE ISBN = %s"
-        current_ISBN = (ISBN, )
-        cur.execute(select_book, current_ISBN)
-        book = cur.fetchall()
-        print(book)
-
-        insert_backup = "INSERT INTO deleted_books VALUES(%s, %s, %s, %s, %s, %s, %s)"
-        backup_val = (book[0][0], book[0][1], book[0][2], book[0][3], book[0][4], book[0][5], book[0][6])
-        cur.execute(insert_backup, backup_val)
-
-        delete_backed_up = "DELETE FROM books WHERE ISBN = %s"
-        isbn_to_be_deleted = (ISBN, )
-        cur.execute(delete_backed_up, isbn_to_be_deleted) """
 
         return redirect("/cart")
     else:
