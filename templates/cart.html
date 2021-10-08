@@ -34,10 +34,9 @@
         </table>
     </div>
     <div style="width:100%">
-        <h3 >Subtotal ({{ cartlen }}) = ₹ hardcoded total price</h3>
+        <h3 >Subtotal ({{ cartlen }}) = {{ cartprice[0][0] }}</h3>
         <br>
-        <form action="/cart" method="post">
-            <a class="btn btn-primary" id="submit" name="submit" value="hardcoded total price" href="/catalogue">Checkout</a></form>
+            <a class="btn btn-primary"  href="/payment">Checkout</a>
         <br><br><br>
     </div>
 
