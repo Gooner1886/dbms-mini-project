@@ -279,7 +279,7 @@ def catalogue():
         return render_template("catalogue.html", title="Catalogue of Books", rows = rows, lenrow = lenrow, bal = bal)
 
 
-@app.route("/cart", methods = ["GET", "POST"])
+@app.route("/cart", methods=["GET", "POST"])
 def cart():
     cur = mydb.cursor()
     if request.method == "GET":
@@ -288,7 +288,13 @@ def cart():
         cart = cur.fetchall()
         print(cart)
         cartlen = len(cart)
-        return render_template("cart.html", cart=cart, cartlen=cartlen)
+
+        cartprice = "SELECT SUM(SalePrice) FROM Cart WHERE Account_ID=%s"
+        cur.execute(cartprice, (session["user_id"],))
+        price=cur.fetchall()
+        print(price)
+
+        return render_template("cart.html", cart=cart, cartlen=cartlen, cartprice=price)
     elif request.method == "POST":
         CARTISBN = request.form["CARTISBN"]
         print(CARTISBN)
@@ -296,3 +302,18 @@ def cart():
         cur.execute(deleteitem, (CARTISBN, ))
         return redirect("/cart")
 
+
+@app.route("/payment", methods=["GET", "POST"])
+def payment():
+    cur = mydb.cursor()
+    select_cart = "SELECT * FROM Cart WHERE Account_ID=%s"
+    cur.execute(select_cart, (session["user_id"],))
+    cart = cur.fetchall()
+    lenrow=len(cart)
+    print("Checkout")
+    print(cart)
+
+    cartprice = "SELECT SUM(SalePrice) FROM Cart WHERE Account_ID=%s"
+    cur.execute(cartprice, (session["user_id"],))
+    price=cur.fetchall()
+    return render_template("checkout.html", kart=cart, lenrow=lenrow, price=price)
