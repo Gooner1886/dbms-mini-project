@@ -10,19 +10,19 @@ from helpers import login_required
 import mysql.connector
 from functools import wraps
 
-""" mydb = mysql.connector.connect(
+mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-) """
-
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Siddharth#52",
-    database="dbmsminiproject"
 )
+
+# mydb = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     password="Siddharth#52",
+#     database="dbmsminiproject"
+# )
 
 print(mydb)
 
@@ -251,14 +251,14 @@ def catalogue():
         mydb.commit()
         print("Book viewing details inserted")
 
-        get_saleprice = "SELECT SalePrice FROM Books WHERE ISBN = %s"
+        get_saleprice = "SELECT SalePrice, Book_name FROM Books WHERE ISBN = %s"
         isbn_val = (ISBN, )
         cur.execute(get_saleprice, isbn_val)
         rows = cur.fetchall()
         print(rows)
 
-        insert_cart = "INSERT INTO CART(Account_ID, ISBN, SalePrice) VALUES(%s, %s, %s)"
-        cartval = (session["user_id"], ISBN, rows[0][0])
+        insert_cart = "INSERT INTO CART(Account_ID, ISBN, Book_name, SalePrice) VALUES(%s, %s, %s, %s)"
+        cartval = (session["user_id"], ISBN, rows[0][1], rows[0][0])
         cur.execute(insert_cart, cartval)
         mydb.commit()
         print("Cart details inserted") 
@@ -278,6 +278,21 @@ def catalogue():
         print(bal)
         return render_template("catalogue.html", title="Catalogue of Books", rows = rows, lenrow = lenrow, bal = bal)
 
+
 @app.route("/cart", methods = ["GET", "POST"])
 def cart():
-    return render_template("cart.html")        
+    cur = mydb.cursor()
+    if request.method == "GET":
+        select_cart = "SELECT * FROM Cart WHERE Account_ID=%s"
+        cur.execute(select_cart, (session["user_id"],))
+        cart = cur.fetchall()
+        print(cart)
+        cartlen = len(cart)
+        return render_template("cart.html", cart=cart, cartlen=cartlen)
+    elif request.method == "POST":
+        CARTISBN = request.form["CARTISBN"]
+        print(CARTISBN)
+        deleteitem = "DELETE FROM Cart WHERE ISBN=%s"
+        cur.execute(deleteitem, (CARTISBN, ))
+        return redirect("/cart")
+
