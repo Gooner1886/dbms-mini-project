@@ -10,19 +10,19 @@ from helpers import login_required
 import mysql.connector
 from functools import wraps
 
-mydb = mysql.connector.connect(
+""" mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-)
+) """
 
-# mydb = mysql.connector.connect(
-#     host="localhost",
-#     user="root",
-#     password="Siddharth#52",
-#     database="dbmsminiproject"
-# )
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Siddharth#52",
+    database="dbmsminiproject"
+)
 
 print(mydb)
 
@@ -366,15 +366,21 @@ def payment():
             mydb.commit()
             print("Payment Seller Record Inserted")
             now = datetime.now()
-            cur.execute(insert_into_payment, (session["user_id"], sellerlist[i], "PURCHASE", now, ))
+            cur.execute(insert_into_payment, (session["user_id"], sellerlist[i], "PURCHASE", now ))
             mydb.commit()
+            show_payment = "SELECT * FROM PAYMENT"
+            cur.execute(show_payment)
+            payments = cur.fetchall()
+            print(payments)
             print("Payment Record Inserted")
 
             remove_from_cart="DELETE FROM CART WHERE Account_ID=%s AND ISBN=%s"
             cur.execute(remove_from_cart, (session["user_id"], bookOrderIsbn[i], ))
+            mydb.commit()
             print("Removed from cart")
             remove_from_books="DELETE FROM Books WHERE ISBN=%s"
             cur.execute(remove_from_books, (bookOrderIsbn[i], ))
+            mydb.commit()
             print("Removed from books")
 
         bookOrderIsbn.clear()
