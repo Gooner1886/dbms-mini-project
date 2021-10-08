@@ -4,24 +4,24 @@
     My Cart
 {% endblock %}
 
-{% block main %}
+{% block body %}
     <div style="padding-bottom: 200px; width:100%;">
         <table style="width:100%" id="tables" class="container p-5">
             <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price(₹)</th>
-                <th>Total(₹)</th>
+                <th>Cart_ID</th>
+                <th>Account_ID</th>
+                <th>ISBN</th>
+                <th>Sale Price</th>
             </tr>
-            {% for i in range(lenrow) %}
+            {% for i in range(2) %}
                 <tr>
-                    <td>{{ kart[i][1] }}</td>
-                    <td>{{ kart[i][2] }}</td>
-                    <td>{{ kart[i][3] }}</td>
-                    <td>{{ kart[i][4] }}</td>
+                    <td>hardcoded Cart ID</td>
+                    <td>hardcoded Account_ID</td>
+                    <td>hardcoded ISBN</td>
+                    <td>hardcoded Sale Price</td>
                     <td>
                         <form action="/cart" method="post">
-                            <button class="btn btn-primary" name="p_id" value="{{ kart[i][6] }}" type="submit">Remove</button>
+                            <button class="btn btn-primary" name="ISBN" value="hardcoded ISBN" type="submit">Remove</button>
                         </form>
                     </td>
                 </tr>
@@ -29,10 +29,10 @@
         </table>
     </div>
     <div style="width:100%">
-        <h3 >Subtotal ({{ lenrow }} items) = ₹ {{ kart_total[0][0] }}</h3>
+        <h3 >Subtotal (hardcoded no. of items) = ₹ hardcoded total price</h3>
         <br>
         <form action="/cart" method="post">
-            <a class="btn btn-primary" id="submit" name="submit" value="{{ kart_total[0][0] }}" href="/checkout">Checkout</a></form>
+            <a class="btn btn-primary" id="submit" name="submit" value="hardcoded total price" href="/catalogue">Checkout</a></form>
         <br><br><br>
     </div>
 

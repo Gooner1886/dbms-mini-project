@@ -286,11 +286,30 @@ def thankyou():
 
 @app.route("/catalogue", methods = ["GET", "POST"])
 def catalogue():
+    cur = mydb.cursor()
     if request.method == "POST":
         ISBN = request.form["ISBN"]
         print(ISBN)
+        now = datetime.now()
+        print(now)
+        insert_view = "INSERT INTO VIEWED(Account_ID, ISBN, Time_viewed) VALUES(%s, %s, %s)"
+        viewval = (session["user_id"], ISBN, now)
+        cur.execute(insert_view, viewval)
+        mydb.commit()
+        print("Book viewing details inserted")
 
-        return redirect("/catalogue")
+        get_saleprice = "SELECT SalePrice FROM Books WHERE ISBN = %s"
+        isbn_val = (ISBN, )
+        cur.execute(get_saleprice, isbn_val)
+        rows = cur.fetchall()
+        print(rows)
+
+        insert_cart = "INSERT INTO CART(Account_ID, ISBN, SalePrice) VALUES(%s, %s, %s)"
+        cartval = (session["user_id"], ISBN, rows[0][0])
+        cur.execute(insert_cart, cartval)
+        mydb.commit()
+        print("Cart details inserted") 
+        return redirect("/cart")
     else:
         cur = mydb.cursor()
         select_books = "SELECT * FROM Books"
@@ -305,3 +324,7 @@ def catalogue():
         bal = cur.fetchall()
         print(bal)
         return render_template("catalogue.html", title="Catalogue of Books", rows = rows, lenrow = lenrow, bal = bal)
+
+@app.route("/cart", methods = ["GET", "POST"])
+def cart():
+    return render_template("cart.html")        
