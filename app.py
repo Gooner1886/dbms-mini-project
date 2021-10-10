@@ -10,18 +10,11 @@ from helpers import login_required
 import mysql.connector
 from functools import wraps
 
-""" mydb = mysql.connector.connect(
+mydb = mysql.connector.connect(
   host="localhost",
   user="root",
   password="rootroot",
   database="thebookkeeper",
-) """
-
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Siddharth#52",
-    database="dbmsminiproject"
 )
 
 print(mydb)
@@ -245,9 +238,12 @@ def catalogue():
         print(ISBN)
         now = datetime.now()
         print(now)
-        insert_view = "INSERT INTO VIEWED(Account_ID, ISBN, Time_viewed) VALUES(%s, %s, %s)"
-        viewval = (session["user_id"], ISBN, now)
+        insert_view = "INSERT INTO VIEWED(Account_ID, ISBN, Time_viewed) VALUES(%s, %s, %s)" #change datetime to string
+        viewval = (session["user_id"], ISBN, now, )
         cur.execute(insert_view, viewval)
+        viewed =cur.fetchall()
+        print("VIEWED")
+        print(viewed)
         mydb.commit()
         print("Book viewing details inserted")
 
